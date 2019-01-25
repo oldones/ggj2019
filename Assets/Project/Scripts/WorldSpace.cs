@@ -24,22 +24,49 @@ public class WorldSpace : MonoBehaviour
     [SerializeField]
     private Dictionary<int, Material> m_PlanetMaterials;
     private Transform m_Trf;
+
+    private void Awake()
+    {
+        m_Trf = transform;
+        for(int i = 0 ; i < m_NumPlanets; ++i)
+        {
+            m_Planets.Add(m_Trf.GetChild(i).GetComponent<Planet>());
+        }
+    }
+
+    private void Update()
+    {
+        if(m_Planets != null)
+        {
+            int count = m_Planets.Count;
+            float dt = Time.deltaTime;
+            for(int i = 0 ; i < count; ++i)
+            {
+                m_Planets[i].UpdatePlanet(dt);
+            }
+        }
+    }
     
     public void BuildSpace()
     {
         m_Trf = transform;
-        m_Planets = new List<Planet>();
         m_PlanetMaterials = new Dictionary<int, Material>();
-        Planet.SPlanetConfig cfg = new Planet.SPlanetConfig();
-        
+        m_Planets = new List<Planet>();
         Vector3 pos;
         for(int i = 0 ; i < m_NumPlanets; ++i)
         {
-            pos = _ValidSpacePos(Random.insideUnitSphere * m_SpaceSize);
-            float scaleRand = UnityEngine.Random.Range(m_MinPlanetSize, m_MaxPlanetSize);
-            cfg.scale = Vector3.one * scaleRand;
-            m_Planets.Add(new Planet(pos, i, this, cfg));
+            //m_Planets.Add(CreatePlanet(i));
+            m_Planets.Add(CreatePlanet(i));
         }
+    }
+
+    private Planet CreatePlanet(int i)
+    {
+        Planet.SPlanetConfig cfg = new Planet.SPlanetConfig();
+        Vector3 pos = _ValidSpacePos(Random.insideUnitSphere * m_SpaceSize);
+        float scaleRand = UnityEngine.Random.Range(m_MinPlanetSize, m_MaxPlanetSize);
+        cfg.scale = Vector3.one * scaleRand;
+        return Planet.CreatePlanet(pos, i, this, cfg);
     }
 
     public void WipeSpace()
