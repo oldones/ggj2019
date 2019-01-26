@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     [SerializeField]
-    private SMenu[] m_Menus;
+    private SMenu[] m_Menus = null;
 
     public void Init()
     {
@@ -36,7 +36,6 @@ public class UIManager : MonoBehaviour
             if(s.state == st)
             {
                 return s;
-                break;
             }
             
         }

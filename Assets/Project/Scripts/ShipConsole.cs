@@ -17,7 +17,7 @@ public class ShipConsole : MonoBehaviour
     private float m_JumpTime = 0f;
     private Vector3 m_JumpTarget = Vector3.zero;
     [SerializeField]
-    private GameObject m_TargetPlanet;
+    private GameObject m_TargetPlanet = null;
     
     private WorldSpace m_WorldSpace = null;
     private Planet m_HomePlanet = null;
