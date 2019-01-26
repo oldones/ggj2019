@@ -604,8 +604,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SpaceSize: 10000
   m_NumPlanets: 500
-  m_MinPlanetSize: 50
-  m_MaxPlanetSize: 1000
+  m_MinPlanetSize: 100
+  m_MaxPlanetSize: 1200
   m_PlanetTextures:
   - {fileID: 2800000, guid: fbcdb30e050528a4188c3194b093b2cb, type: 3}
   - {fileID: 2800000, guid: 23cde0c93c23ad84eba5e4799c9fb392, type: 3}
