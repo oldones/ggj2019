@@ -32,6 +32,9 @@ public class ShipController2 : MonoBehaviour
     [SerializeField]
     private float m_MaxReverseSpeed;
 
+    [Header("RenderTex")]
+    [SerializeField]
+    private RenderTexController m_RenderTexController;
     [Header("UI")]
     [SerializeField]
     private GameObject m_SpeedUI;
@@ -193,6 +196,14 @@ public class ShipController2 : MonoBehaviour
         
         if(Input.GetKeyDown(KeyCode.Space)){
             m_ShipConsole.FocusPanel(ShipConsole.EPanels.None);
+        }
+    }
+
+    private void _HandleConsoleInput(){
+        if(Input.GetKeyDown(KeyCode.T)){
+            if(m_RenderTexController != null){
+                m_RenderTexController.SetupNavigationPreview(null);
+            }
         }
     }
 
