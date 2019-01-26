@@ -9,11 +9,15 @@ public class ShipConsole : MonoBehaviour
     private float m_NextScanTime = 0f;
     private const float SCAN_PLANET_TIMER = 10f;
     private const float MAX_DIST_INTERACT_PLANET = 500f;
+    private const float HD_JUMP_TIME = 2f;
 
     private delegate void UpdateMethod(float dt);
     private UpdateMethod m_UpdateMethod;
     private bool m_CanInteract = true;
-
+    private float m_JumpTime = 0f;
+    private Vector3 m_JumpTarget = Vector3.zero;
+    [SerializeField]
+    private GameObject m_TargetPlanet;
     public void Init()
     {
         closestPlanet = ScanClosestPlanet();
@@ -66,6 +70,20 @@ public class ShipConsole : MonoBehaviour
         }
     }
 
+    private void _FlyToUpdate(float dt)
+    {
+        m_JumpTime += dt;
+        float progress =  m_JumpTime / HD_JUMP_TIME;
+        m_Trf.position = Vector3.Slerp(m_Trf.position, m_JumpTarget, progress);
+        m_Trf.LookAt(m_JumpTarget);
+        
+        float dist = Vector3.Distance(closestPlanet.trf.position, m_Trf.position);
+        if(dist < MAX_DIST_INTERACT_PLANET)
+        {
+            m_UpdateMethod = _InteractUpdate;
+        }
+    }
+
     public Planet ScanClosestPlanet(bool lookAt = false)
     {
         List<Planet> ps = WorldSpace.Instance.planets;
@@ -88,5 +106,19 @@ public class ShipConsole : MonoBehaviour
             Debug.LogWarningFormat("Closest planet is: {0} at distance: {1}", closestPlanet.planet.name, closest);
         }
         return closestPlanet;
+    }
+
+    public void FlyToClosestPlanet()
+    {
+        m_JumpTime = 0f;
+
+        if(m_TargetPlanet != null)
+        {
+            closestPlanet = m_TargetPlanet.GetComponent<Planet>();
+        }
+
+        m_JumpTarget = closestPlanet.trf.position;
+        m_UpdateMethod = _FlyToUpdate;
+        m_CanInteract = false;
     }
 }

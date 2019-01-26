@@ -50,6 +50,10 @@ public class WorldSpace : MonoBehaviour
         {
             m_ShipConsole.ScanClosestPlanet(true);
         }
+        else if(Input.GetKeyUp(KeyCode.Alpha2))
+        {
+            m_ShipConsole.FlyToClosestPlanet();
+        }
         m_ShipConsole.UpdateShipConsole(dt);
     }
     
