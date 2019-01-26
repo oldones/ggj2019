@@ -61,7 +61,7 @@ public class ShipConsole : MonoBehaviour
         m_WorldSpace = ws;
         m_HomePlanet = ws.homePlanet;
         m_HomePlanetCoords = m_HomePlanet.trf.position;
-        closestPlanet = ScanClosestPlanet();
+        closestPlanet = ScanClosestPlanet(1)[0];
         m_Trf = transform;
         m_UpdateMethod = _IdleUpdate;
     }
@@ -86,7 +86,7 @@ public class ShipConsole : MonoBehaviour
             if(m_NextScanTime > SCAN_PLANET_TIMER)
             {
                 m_NextScanTime = 0f;
-                closestPlanet = ScanClosestPlanet();
+                closestPlanet = ScanClosestPlanet(1)[0];
             }
 
             float dist = Vector3.Distance(closestPlanet.trf.position, m_Trf.position);
@@ -191,28 +191,38 @@ public class ShipConsole : MonoBehaviour
         }
     }
 
-    public Planet ScanClosestPlanet(bool lookAt = false)
+    public Planet[] ScanClosestPlanet(int numPlanets, bool lookAt = false)
     {
         List<Planet> ps = m_WorldSpace.planets;
         Vector3 pos = transform.position;
         int count = ps.Count;
         float closest = float.MaxValue;
+
+        SortedList<float, Planet> sList = new SortedList<float,Planet>();
+        
+
         for(int i = 0 ; i < count; ++i)
         {
             float dist = Vector3.Distance(pos, ps[i].planet.transform.position);
-            if(dist < closest)
-            {
-                closest = dist;
-                closestPlanet = ps[i];
-            }
+            sList.Add(dist, ps[i]);
         }
+
+        closest = sList.Keys[0];
+        closestPlanet = sList.Values[0];
 
         if(lookAt)
         {
             transform.LookAt(closestPlanet.transform);
             Debug.LogWarningFormat("Closest planet is: {0} at distance: {1}", closestPlanet.planet.name, closest);
         }
-        return closestPlanet;
+
+        Planet[] result = new Planet[numPlanets];
+        for(int i = 0 ; i < sList.Values.Count; ++i)
+        {
+            result[i] = sList.Values[i];
+        }
+
+        return result;
     }
 
     public void FlyToClosestPlanet()

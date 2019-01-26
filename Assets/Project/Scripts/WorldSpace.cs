@@ -51,7 +51,7 @@ public class WorldSpace : MonoBehaviour
     
         if(Input.GetKeyUp(KeyCode.Alpha1))
         {
-            m_ShipConsole.ScanClosestPlanet(true);
+            m_ShipConsole.ScanClosestPlanet(1,true);
         }
         else if(Input.GetKeyUp(KeyCode.Alpha2))
         {
