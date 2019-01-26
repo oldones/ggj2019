@@ -226,9 +226,10 @@ public class ShipConsole : MonoBehaviour
         return result;
     }
 
-    public void FlyToClosestPlanet()
+    public void FlyToPlanet(Planet p)
     {
         m_JumpTime = 0f;
+        m_TargetPlanet = p;
 
         if(m_TargetPlanet != null)
         {

@@ -48,16 +48,6 @@ public class WorldSpace : MonoBehaviour
 
     public bool UpdateWorldSpace(float dt)
     {   
-    
-        if(Input.GetKeyUp(KeyCode.Alpha1))
-        {
-            m_ShipConsole.ScanClosestPlanet(1,true);
-        }
-        else if(Input.GetKeyUp(KeyCode.Alpha2))
-        {
-            m_ShipConsole.FlyToClosestPlanet();
-        }
-
         return m_ShipConsole.UpdateShipConsole(dt);
     }
     
