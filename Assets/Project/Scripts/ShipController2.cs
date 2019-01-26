@@ -11,6 +11,8 @@ public class ShipController2 : MonoBehaviour
     [SerializeField]
     float m_StrafeSpeed;
     [SerializeField]
+    private float m_HyperdriveMultiplier;
+    [SerializeField]
     private float m_MaxSpeed;
     [SerializeField]
     private float m_MaxReverseSpeed;
@@ -25,6 +27,9 @@ public class ShipController2 : MonoBehaviour
     private float m_Yaw;
     private float m_Power;
     private Vector3 m_Strafe;
+
+    private bool m_Hyperdrive;
+    private float m_PrevTrueSpeed;
 
     void Awake(){
         m_Rigidbody = GetComponent<Rigidbody>();
@@ -44,8 +49,13 @@ public class ShipController2 : MonoBehaviour
         //cap values
         m_TrueSpeed = Mathf.Max(-m_MaxReverseSpeed, Mathf.Min(m_MaxSpeed, m_TrueSpeed));
 
+        if(m_Hyperdrive && m_TrueSpeed > 0f){
+            m_TrueSpeed *= m_HyperdriveMultiplier;
+            Mathf.Min(m_MaxSpeed * m_HyperdriveMultiplier, m_TrueSpeed);
+        }
+
         m_Rigidbody.AddRelativeTorque(m_Pitch*m_TurnSpeed*Time.deltaTime, m_Yaw*m_TurnSpeed*Time.deltaTime, m_Roll*m_TurnSpeed*Time.deltaTime);
-        m_Rigidbody.AddRelativeForce(0,0,m_TrueSpeed*m_Speed*Time.deltaTime);
+        m_Rigidbody.AddRelativeForce(0,0, m_TrueSpeed*m_Speed*Time.deltaTime);
         m_Rigidbody.AddRelativeForce(m_Strafe);
     }
 
@@ -79,6 +89,16 @@ public class ShipController2 : MonoBehaviour
         if (Input.GetKey("backspace")){
             m_TrueSpeed = 0;
         }
+
+        if(Input.GetKeyDown(KeyCode.LeftShift)){
+            m_PrevTrueSpeed = m_TrueSpeed;
+            m_Hyperdrive = true;
+        }
+        if(Input.GetKeyUp(KeyCode.LeftShift)){
+            m_TrueSpeed = m_PrevTrueSpeed;
+            m_Hyperdrive = false;
+        }
+
     }
 
 }
