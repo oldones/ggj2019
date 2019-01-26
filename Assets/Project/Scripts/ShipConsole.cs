@@ -4,22 +4,35 @@ using UnityEngine;
 
 public class ShipConsole : MonoBehaviour
 {
-    // Update is called once per frame
-    void Update()
+    public Planet closestPlanet{get;private set;}
+    private Transform m_Trf;
+    private float m_NextScanTime = 0f;
+    private const float SCAN_PLANET_TIMER = 10f;
+
+
+    private void Awake()
     {
-        if(Input.GetKeyUp(KeyCode.Alpha1))
-        {
-            _ScanClosestPlanet();
-        }
+        closestPlanet = ScanClosestPlanet();
+        m_Trf = transform;
     }
 
-    private void _ScanClosestPlanet()
+    public void UpdateShipConsole(float dt)
+    {
+        m_NextScanTime += dt;
+        if(m_NextScanTime > SCAN_PLANET_TIMER)
+        {
+            m_NextScanTime = 0f;
+            closestPlanet = ScanClosestPlanet();
+        }
+        closestPlanet.UpdatePlanet(this, dt);
+    }
+
+    public Planet ScanClosestPlanet(bool lookAt = false)
     {
         List<Planet> ps = WorldSpace.Instance.planets;
         Vector3 pos = transform.position;
         int count = ps.Count;
         float closest = float.MaxValue;
-        Planet closestPlanet = null;
         for(int i = 0 ; i < count; ++i)
         {
             float dist = Vector3.Distance(pos, ps[i].planet.transform.position);
@@ -29,7 +42,12 @@ public class ShipConsole : MonoBehaviour
                 closestPlanet = ps[i];
             }
         }
-        transform.LookAt(closestPlanet.transform);
-        Debug.LogWarningFormat("Closest planet is: {0} at distance: {1}", closestPlanet.planet.name, closest);
+
+        if(lookAt)
+        {
+            transform.LookAt(closestPlanet.transform);
+            Debug.LogWarningFormat("Closest planet is: {0} at distance: {1}", closestPlanet.planet.name, closest);
+        }
+        return closestPlanet;
     }
 }

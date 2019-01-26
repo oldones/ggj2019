@@ -64,3 +64,4 @@ MonoBehaviour:
   m_PlanetPrefab: {fileID: 873600474223607539, guid: df9775aba534c6747a54057472de165d,
     type: 3}
   m_Planets: []
+  m_ShipConsole: {fileID: 0}

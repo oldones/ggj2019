@@ -13,17 +13,19 @@ public class WorldSpace : MonoBehaviour
     [SerializeField]
     private float m_MaxPlanetSize = 1000f;
     [SerializeField]
-    private Texture[] m_PlanetTextures;
+    private Texture[] m_PlanetTextures = null;
     [SerializeField]
-    private Material m_PlanetMaterial;
+    private Material m_PlanetMaterial = null;
     [SerializeField]
-    private GameObject m_PlanetPrefab;
+    private GameObject m_PlanetPrefab = null;
     public GameObject planetPrefab{ get {return m_PlanetPrefab;}}
     [SerializeField]
     private List<Planet> m_Planets;
     public List<Planet> planets{get{return m_Planets;}}
     [SerializeField]
     private Dictionary<int, Material> m_PlanetMaterials;
+    [SerializeField]
+    private ShipConsole m_ShipConsole = null;
     private Transform m_Trf;
 
     public static WorldSpace Instance;
@@ -41,15 +43,21 @@ public class WorldSpace : MonoBehaviour
 
     private void Update()
     {
-        if(m_Planets != null)
+        float dt = Time.deltaTime;
+        // if(m_Planets != null)
+        // {
+        //     int count = m_Planets.Count;
+        //     for(int i = 0 ; i < count; ++i)
+        //     {
+        //         m_Planets[i].UpdatePlanet(dt);
+        //     }
+        // }
+        
+        if(Input.GetKeyUp(KeyCode.Alpha1))
         {
-            int count = m_Planets.Count;
-            float dt = Time.deltaTime;
-            for(int i = 0 ; i < count; ++i)
-            {
-                m_Planets[i].UpdatePlanet(dt);
-            }
+            m_ShipConsole.ScanClosestPlanet(true);
         }
+        m_ShipConsole.UpdateShipConsole(dt);
     }
     
     public void BuildSpace()
@@ -57,7 +65,6 @@ public class WorldSpace : MonoBehaviour
         m_Trf = transform;
         m_PlanetMaterials = new Dictionary<int, Material>();
         m_Planets = new List<Planet>();
-        Vector3 pos;
         for(int i = 0 ; i < m_NumPlanets; ++i)
         {
             //m_Planets.Add(CreatePlanet(i));
@@ -71,7 +78,42 @@ public class WorldSpace : MonoBehaviour
         Vector3 pos = _ValidSpacePos(Random.insideUnitSphere * m_SpaceSize);
         float scaleRand = UnityEngine.Random.Range(m_MinPlanetSize, m_MaxPlanetSize);
         cfg.scale = Vector3.one * scaleRand;
-        return Planet.CreatePlanet(pos, i, this, cfg);
+        return Planet.CreatePlanet(pos, _GetPlanetName(), i, this, cfg);
+    }
+
+    private string _GetPlanetName()
+    {
+        int retries = 100;
+        bool validName = true;
+        int count = m_Planets.Count;
+        string name = "";
+        do
+        {
+            name = _GenName();
+            validName = true;
+
+            for(int i = 0 ; i < count; ++i)
+            {
+                if(name == m_Planets[i].planet.name)
+                {
+                    validName = false;
+                    break;
+                }
+            }
+            --retries;
+        } while(!validName && retries > 0);
+        return name;
+    }
+
+    private string _GenName()
+    {
+        string[] prefixes = new string[]{"HD ","HIP ", "GJ ", "Kepler-", "Brahe-", "Galilei-", "Halley-", "Herschel-", "Messier-", "Cannon-", "Leavitt-",
+        "Samos-","Mitchell-","Laplace-","Lowel-", "Bannerker-", "Galle-","Ptolemy-", "Copernicus-", "Newton-","Huygens-","Cassini-", "Sagan-","Hawking-"};
+        string[] sufixes = new string[]{"", "A", "b", "Ab"};
+        string prf = prefixes[UnityEngine.Random.Range(0, prefixes.Length)];
+        int mid = UnityEngine.Random.Range(100000, 1000000);
+        string suf = sufixes[UnityEngine.Random.Range(0, sufixes.Length)];
+        return prf + mid + " " + suf;
     }
 
     public void WipeSpace()
