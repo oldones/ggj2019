@@ -94,7 +94,7 @@ public class WorldSpace : MonoBehaviour
     private Planet CreatePlanet(int i)
     {
         Planet.SPlanetConfig cfg = new Planet.SPlanetConfig();
-        Vector3 pos = _ValidSpacePos(UnityEngine.Random.insideUnitSphere * m_SpaceSize);
+        Vector3 pos = _GetValidPlanetPos(UnityEngine.Random.insideUnitSphere * m_SpaceSize);
         float scaleRand = UnityEngine.Random.Range(m_MinPlanetSize, m_MaxPlanetSize);
         cfg.scale = Vector3.one * scaleRand;
         return Planet.CreatePlanet(pos, _GetPlanetName(), i, this, cfg);
@@ -143,14 +143,26 @@ public class WorldSpace : MonoBehaviour
         planets = null;
     }
 
-    private Vector3 _ValidSpacePos(Vector3 candidate, int retries = 100)
+    private Vector3 _GetValidPlanetPos(Vector3 candidate, int retries = 100)
     {
-        for(int i = 0 ; i < planets.Count; ++i)
+        if(retries > 0)
         {
-            if(retries > 0 && Vector3.Distance(planets[i].planet.transform.position, candidate) < m_MaxPlanetSize * 3)
+            Vector3 origin = Vector3.zero;
+            float safeDist = m_MaxPlanetSize * 3;     
+            if(Vector3.Distance(origin, candidate) > safeDist)
             {
-                return _ValidSpacePos(UnityEngine.Random.insideUnitSphere * m_SpaceSize, retries - 1);
+                for(int i = 0 ; i < planets.Count; ++i)
+                {
+                    if(Vector3.Distance(planets[i].planet.transform.position, candidate) < safeDist)
+                    {
+                        return _GetValidPlanetPos(UnityEngine.Random.insideUnitSphere * m_SpaceSize, retries - 1);
+                    }
+                }
             }
+            else
+            {
+                return _GetValidPlanetPos(UnityEngine.Random.insideUnitSphere * m_SpaceSize, retries - 1);
+            } 
         }
         return candidate;
     }

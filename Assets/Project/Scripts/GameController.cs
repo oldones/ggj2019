@@ -41,7 +41,6 @@ public class GameController : MonoBehaviour
         m_UpdateState(dt);
     }
 
-    private float m_TutorialTime = 0f;
     void _UpdateTutorial(float dt)
     {
     }
