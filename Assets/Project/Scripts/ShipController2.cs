@@ -204,7 +204,8 @@ public class ShipController2 : MonoBehaviour
     private void _HandleConsoleInput(){
         if(Input.GetKeyDown(KeyCode.T)){
             if(m_RenderTexController != null){
-                m_RenderTexController.SetupNavigationPreview(null);
+                
+                m_RenderTexController.SetupNavigationPreview(m_ShipConsole.ScanClosestPlanet(3));
             }
         }
     }
@@ -230,6 +231,7 @@ public class ShipController2 : MonoBehaviour
             _HandleSteering();
         _HandlePanelInputs();
         _UpdateUIElements();
+        _HandleConsoleInput();
     }
 
 }
