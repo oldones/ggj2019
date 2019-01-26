@@ -212,9 +212,9 @@ public class ShipController2 : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.Return)){
             if(!m_ShipConsole.IsSteering && m_CurrentTrackedPlanets != null){
-
                 int index = m_ShipConsole.GetCurrentPanelIndex();
                 m_ShipConsole.FlyToPlanet(m_CurrentTrackedPlanets[index]);
+                m_ShipConsole.FocusPanel(ShipConsole.EPanels.None);
             }
         }
     }
