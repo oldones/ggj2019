@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 #pragma warning disable CS0649 //serialize field bullshit
 
@@ -30,6 +32,10 @@ public class ShipController2 : MonoBehaviour
     [SerializeField]
     private float m_MaxReverseSpeed;
 
+    [Header("UI")]
+    [SerializeField]
+    private GameObject m_SpeedUI;
+
     [Header("Do not edit")]
     [SerializeField]
     private float m_TrueSpeed = 0.0f;
@@ -54,6 +60,9 @@ public class ShipController2 : MonoBehaviour
         m_ShipConsole = GetComponent<ShipConsole>();
         m_Rigidbody = GetComponent<Rigidbody>();
         m_WarpSpeed = GetComponentInChildren<WarpSpeed>();
+
+        m_SpeedBar = m_SpeedUI.GetComponentInChildren<Image>();
+        m_SpeedLabel = m_SpeedUI.GetComponentInChildren<TextMeshProUGUI>();
     }
 
     void Update () {
@@ -165,6 +174,8 @@ public class ShipController2 : MonoBehaviour
             m_TrueSpeed = m_PrevTrueSpeed;
             m_Hyperdrive = false;
         }
+
+        m_ShipConsole.SetWarp(m_Hyperdrive);
     }
 
     private void _HandlePanelInputs(){
@@ -185,12 +196,27 @@ public class ShipController2 : MonoBehaviour
         }
     }
 
+    private Image m_SpeedBar;
+    private TextMeshProUGUI m_SpeedLabel;
+
+    private void _UpdateUIElements(){
+        if(m_SpeedLabel != null)
+            m_SpeedLabel.text = m_TrueSpeed.ToString();
+        if(m_SpeedBar != null){
+            Vector3 targetScale = m_SpeedBar.transform.localScale;
+            targetScale.x = m_TrueSpeed / m_MaxSpeed;
+            targetScale.x /= m_Hyperdrive ? (m_HyperdriveMultiplier / 3f) : 1f;
+            m_SpeedBar.transform.localScale = Vector3.Lerp(m_SpeedBar.transform.localScale, targetScale, Time.deltaTime * 5f);
+            m_SpeedBar.color = m_TrueSpeed > 0f ? Color.white : Color.red;
+        }
+    }
+
     private void _HandleInput(){
         
         if(m_ShipConsole.IsSteering)
             _HandleSteering();
         _HandlePanelInputs();
-
+        _UpdateUIElements();
     }
 
 }

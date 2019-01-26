@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 #pragma warning disable CS0649 //serialize field bullshit
 
@@ -32,6 +33,12 @@ public class ShipConsole : MonoBehaviour
     Quaternion centerPanelRotation;
     Quaternion leftPanelRotation;
     Quaternion rightPanelRotation;
+    public bool m_Warp = false;
+
+    [Header("Effects")]
+    [SerializeField]
+    private Image m_VignetteEffect;
+
 
     void Awake(){
         m_ShipCamera = GetComponentInChildren<Camera>();
@@ -196,11 +203,36 @@ public class ShipConsole : MonoBehaviour
     }
 
     float c = 0f;
+    float zoomFoV = 35f;
+    float defaultFoV = 65f;
+    float hyperdriveFoV = 110f;
 
-    void Update(){
+    private void _UpdateCamera(){
         if(m_ShipCamera.transform.localRotation != targetRotation){
+            //change camera FoV
+            if(m_ShipCamera.fieldOfView != defaultFoV && m_CurrentPanel == EPanels.None)
+                m_ShipCamera.fieldOfView = Mathf.Lerp(m_ShipCamera.fieldOfView, defaultFoV, c);
+            if(m_ShipCamera.fieldOfView != zoomFoV && m_CurrentPanel != EPanels.None)
+                m_ShipCamera.fieldOfView = Mathf.Lerp(m_ShipCamera.fieldOfView, zoomFoV, c);
+            //rotate towards target
             m_ShipCamera.transform.localRotation = Quaternion.Lerp(startRotation, targetRotation, c);
             c+=Time.deltaTime * 3f;
         }
+    }
+
+    public void SetWarp(bool w){
+        m_Warp = w;
+    }
+
+    private void _UpdateWarpEffect(){
+        if(IsSteering){
+            m_ShipCamera.fieldOfView = Mathf.Lerp(m_ShipCamera.fieldOfView, m_Warp ? hyperdriveFoV : defaultFoV, Time.deltaTime * 2f);
+            m_VignetteEffect.color = Color.Lerp(m_VignetteEffect.color, m_Warp ? Color.white : new Color(1f,1f,1f,0f), Time.deltaTime);
+        }
+    }
+
+    void Update(){
+        _UpdateCamera();
+        _UpdateWarpEffect();
     }
 }
