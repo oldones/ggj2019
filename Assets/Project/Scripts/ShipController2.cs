@@ -166,11 +166,6 @@ public class ShipController2 : MonoBehaviour
             m_Hyperdrive = false;
         }
 
-        if(Input.GetKeyDown(KeyCode.C)){
-            m_ShipConsole.FocusCanvas(focusingCanvas);
-            focusingCanvas = !focusingCanvas;
-        }
-
     }
 
 }

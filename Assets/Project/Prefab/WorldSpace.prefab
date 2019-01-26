@@ -63,5 +63,5 @@ MonoBehaviour:
   m_PlanetMaterial: {fileID: 2100000, guid: 77966f6c7c84172428628679a52663a3, type: 2}
   m_PlanetPrefab: {fileID: 873600474223607539, guid: df9775aba534c6747a54057472de165d,
     type: 3}
-  m_Planets: []
   m_ShipConsole: {fileID: 0}
+  m_MinDistanceHomePlanet: 5000

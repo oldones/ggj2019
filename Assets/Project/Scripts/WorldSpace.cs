@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,56 +20,81 @@ public class WorldSpace : MonoBehaviour
     [SerializeField]
     private GameObject m_PlanetPrefab = null;
     public GameObject planetPrefab{ get {return m_PlanetPrefab;}}
-    [SerializeField]
-    private List<Planet> m_Planets;
-    public List<Planet> planets{get{return m_Planets;}}
+    public List<Planet> planets{get;private set;}
     [SerializeField]
     private Dictionary<int, Material> m_PlanetMaterials;
     [SerializeField]
     private ShipConsole m_ShipConsole = null;
+    [SerializeField]
+    private float m_MinDistanceHomePlanet = 0f;
     private Transform m_Trf;
 
-    public static WorldSpace Instance;
+    public Planet homePlanet{get;private set;}
 
 
-    private void Awake()
+    public void Init()
     {
-        Instance = this;
         m_Trf = transform;
+        planets = new List<Planet>();
         for(int i = 0 ; i < m_NumPlanets; ++i)
         {
-            m_Planets.Add(m_Trf.GetChild(i).GetComponent<Planet>());
+            planets.Add(m_Trf.GetChild(i).GetComponent<Planet>());
         }
-        m_ShipConsole.Init();
+        homePlanet = _AssignHomePlanet();
+        m_ShipConsole.Init(this);
     }
 
-    private void Update()
-    {
-        float dt = Time.deltaTime;
-        
-        if(Input.GetKeyUp(KeyCode.Alpha1))
-        {
-            m_ShipConsole.ScanClosestPlanet(true);
-        }
+    public void UpdateWorldSpace(float dt)
+    {   
         m_ShipConsole.UpdateShipConsole(dt);
+
+        // if(Input.GetKeyUp(KeyCode.Alpha1))
+        // {
+        //     m_ShipConsole.ScanClosestPlanet(true);
+        // }
+        // else if(Input.GetKeyUp(KeyCode.Alpha2))
+        // {
+        //     m_ShipConsole.FlyToClosestPlanet();
+        // }
+        // 
     }
     
     public void BuildSpace()
     {
         m_Trf = transform;
         m_PlanetMaterials = new Dictionary<int, Material>();
-        m_Planets = new List<Planet>();
+        planets = new List<Planet>();
         for(int i = 0 ; i < m_NumPlanets; ++i)
         {
             //m_Planets.Add(CreatePlanet(i));
-            m_Planets.Add(CreatePlanet(i));
+            planets.Add(CreatePlanet(i));
         }
+    }
+
+    private Planet _AssignHomePlanet()
+    {
+        int retries = 100;
+        Vector3 shipPos = m_ShipConsole.transform.position;
+        Planet p = null;
+        while(retries > 0)
+        {
+            p = planets[UnityEngine.Random.Range(0, planets.Count)];
+            if(Vector3.Distance(shipPos, p.trf.position) > m_MinDistanceHomePlanet)
+            {
+                Debug.LogFormat("Chose {0} to be home planet.", p.planet.name);
+                return p;
+            }
+            --retries;
+        }
+        p = planets[UnityEngine.Random.Range(0, planets.Count)];
+        Debug.LogFormat("Failed to assign home planet, {0} was chosen randomly.", p.planet.name);
+        return p;
     }
 
     private Planet CreatePlanet(int i)
     {
         Planet.SPlanetConfig cfg = new Planet.SPlanetConfig();
-        Vector3 pos = _ValidSpacePos(Random.insideUnitSphere * m_SpaceSize);
+        Vector3 pos = _ValidSpacePos(UnityEngine.Random.insideUnitSphere * m_SpaceSize);
         float scaleRand = UnityEngine.Random.Range(m_MinPlanetSize, m_MaxPlanetSize);
         cfg.scale = Vector3.one * scaleRand;
         return Planet.CreatePlanet(pos, _GetPlanetName(), i, this, cfg);
@@ -78,7 +104,7 @@ public class WorldSpace : MonoBehaviour
     {
         int retries = 100;
         bool validName = true;
-        int count = m_Planets.Count;
+        int count = planets.Count;
         string name = "";
         do
         {
@@ -87,7 +113,7 @@ public class WorldSpace : MonoBehaviour
 
             for(int i = 0 ; i < count; ++i)
             {
-                if(name == m_Planets[i].planet.name)
+                if(name == planets[i].planet.name)
                 {
                     validName = false;
                     break;
@@ -114,16 +140,16 @@ public class WorldSpace : MonoBehaviour
         m_Trf = transform;
         while(m_Trf.childCount > 0)
             GameObject.DestroyImmediate(m_Trf.GetChild(0).gameObject);
-        m_Planets = null;
+        planets = null;
     }
 
     private Vector3 _ValidSpacePos(Vector3 candidate, int retries = 100)
     {
-        for(int i = 0 ; i < m_Planets.Count; ++i)
+        for(int i = 0 ; i < planets.Count; ++i)
         {
-            if(retries > 0 && Vector3.Distance(m_Planets[i].planet.transform.position, candidate) < m_MaxPlanetSize * 3)
+            if(retries > 0 && Vector3.Distance(planets[i].planet.transform.position, candidate) < m_MaxPlanetSize * 3)
             {
-                return _ValidSpacePos(Random.insideUnitSphere * m_SpaceSize, retries - 1);
+                return _ValidSpacePos(UnityEngine.Random.insideUnitSphere * m_SpaceSize, retries - 1);
             }
         }
         return candidate;
