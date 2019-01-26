@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class ShipController2 : MonoBehaviour
 {
+    [Header("Control scheme")]
+    [SerializeField]
+    private bool m_UseMouse = false;
+    [Range(0f, 5f)]
+    [SerializeField]
+    private float m_MouseSensitivity = 1f;
+    [SerializeField]
+    private bool m_InvertMousePitch = false;
+    [SerializeField]
+    private bool m_SimpleMode = true;
+    [Header("Ship params")]
     [SerializeField]
     float m_TurnSpeed;   
     [SerializeField]
@@ -21,6 +32,8 @@ public class ShipController2 : MonoBehaviour
     [SerializeField]
     private float m_TrueSpeed = 0.0f;
 
+
+    private ShipConsole m_ShipConsole;
     private Rigidbody m_Rigidbody;
     private float m_Roll;
     private float m_Pitch;
@@ -31,8 +44,14 @@ public class ShipController2 : MonoBehaviour
     private bool m_Hyperdrive;
     private float m_PrevTrueSpeed;
 
+    private readonly Vector2 m_ScreenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+
+    private WarpSpeed m_WarpSpeed;
+
     void Awake(){
+        m_ShipConsole = GetComponent<ShipConsole>();
         m_Rigidbody = GetComponent<Rigidbody>();
+        m_WarpSpeed = GetComponentInChildren<WarpSpeed>();
     }
 
     void Update () {
@@ -59,6 +78,12 @@ public class ShipController2 : MonoBehaviour
         m_Rigidbody.AddRelativeForce(m_Strafe);
     }
 
+    private bool _MousePosValid(Vector3 mPos){
+        return mPos.x >= 0f && mPos.x <= Screen.width && mPos.y >= 0f && mPos.y <= Screen.height;
+    }
+
+    bool focusingCanvas = false;
+
     private void _HandleInput(){
         m_Roll = 0f;
         m_Pitch = 0f;
@@ -66,25 +91,67 @@ public class ShipController2 : MonoBehaviour
         m_Power = 0f;
         m_Strafe = Vector3.zero;
 
-        if(Input.GetKey(KeyCode.LeftArrow))
-            m_Roll = 1f;
-        if(Input.GetKey(KeyCode.RightArrow))
-            m_Roll = -1f;
-        if(Input.GetKey(KeyCode.UpArrow))
-            m_Pitch = -1f;
-        if(Input.GetKey(KeyCode.DownArrow))
-            m_Pitch = 1f;
-        if(Input.GetKey(KeyCode.Q))
-            m_Yaw = -1f;
-        if(Input.GetKey(KeyCode.E))
-            m_Yaw = 1f;
+        if(!m_UseMouse){
+            if(Input.GetKey(KeyCode.LeftArrow))
+                m_Roll = 1f;
+            if(Input.GetKey(KeyCode.RightArrow))
+                m_Roll = -1f;
+            if(Input.GetKey(KeyCode.UpArrow))
+                m_Pitch = -1f;
+            if(Input.GetKey(KeyCode.DownArrow))
+                m_Pitch = 1f;
+            if(Input.GetKey(KeyCode.Q))
+                m_Yaw = -1f;
+            if(Input.GetKey(KeyCode.E))
+                m_Yaw = 1f;
+        }
+        else {
+
+            Vector3 mPos = Input.mousePosition;
+            if(_MousePosValid(mPos)){
+                Vector2 mDelta = ((Vector2)mPos - m_ScreenCenter);
+                mDelta /= m_ScreenCenter;
+                // Debug.Log(mDelta);
+                //pitch,yaw
+                if(mDelta.magnitude > 0.2f){
+                    m_Yaw = m_MouseSensitivity * mDelta.x * Mathf.Abs(mDelta.x);
+                    m_Pitch = m_MouseSensitivity * (-mDelta.y * (m_InvertMousePitch ? -1f : 1f)) * Mathf.Abs(mDelta.y);
+                }
+                //roll
+                bool m0 = Input.GetMouseButton(0);
+                bool m1 = Input.GetMouseButton(1);
+
+                if(m_SimpleMode){
+                    if(m0)
+                        m_Power = 1f;
+                    if(m1)
+                        m_Power = -1f;
+                }
+                else{
+                    if(m0)
+                        m_Roll = -1f;
+                    if(m1)
+                        m_Roll = 1f;
+                }
+            }
+        }
             
         m_Strafe = new Vector3(Input.GetAxis("Horizontal")*m_StrafeSpeed*Time.deltaTime, Input.GetAxis("Vertical")*m_StrafeSpeed*Time.deltaTime, 0);
 
-        if(Input.GetKey(KeyCode.Z))
-            m_Power = 1f;
-        if(Input.GetKey(KeyCode.X))
-            m_Power = -1f;
+        if(m_SimpleMode)
+        {
+            if(Input.GetKey(KeyCode.Z))
+                m_Roll = 1f;
+            if(Input.GetKey(KeyCode.X))
+                m_Roll = -1f;
+        }
+        else
+        {
+            if(Input.GetKey(KeyCode.Z))
+                m_Power = 1f;
+            if(Input.GetKey(KeyCode.X))
+                m_Power = -1f;
+        }
 
         if (Input.GetKey("backspace")){
             m_TrueSpeed = 0;
@@ -97,6 +164,11 @@ public class ShipController2 : MonoBehaviour
         if(Input.GetKeyUp(KeyCode.LeftShift)){
             m_TrueSpeed = m_PrevTrueSpeed;
             m_Hyperdrive = false;
+        }
+
+        if(Input.GetKeyDown(KeyCode.C)){
+            m_ShipConsole.FocusCanvas(focusingCanvas);
+            focusingCanvas = !focusingCanvas;
         }
 
     }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8534991045210650453}
   - component: {fileID: 8534991045210650440}
   - component: {fileID: 8534991045210650455}
+  - component: {fileID: 6681784834616399178}
   m_Layer: 0
   m_Name: ShipPrefab
   m_TagString: Untagged
@@ -46,6 +47,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adbbc28cdb09e4ad580fc4746f0ad2f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_UseMouse: 0
+  m_MouseSensitivity: 1
+  m_InvertMousePitch: 0
+  m_SimpleMode: 1
   m_TurnSpeed: 50
   m_Speed: 30
   m_StrafeSpeed: 50
@@ -69,6 +74,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &6681784834616399178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8534991045210650452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e6735854e089b94e84f58fd315d52a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8534991045666578642
 GameObject:
   m_ObjectHideFlags: 0

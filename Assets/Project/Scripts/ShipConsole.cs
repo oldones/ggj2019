@@ -14,6 +14,17 @@ public class ShipConsole : MonoBehaviour
     private UpdateMethod m_UpdateMethod;
     private bool m_CanInteract = true;
 
+    private Canvas m_ShipCanvas;
+    private Camera m_ShipCamera;
+
+    void Awake(){
+        m_ShipCamera = GetComponentInChildren<Camera>();
+        m_ShipCanvas = GetComponentInChildren<Canvas>();
+
+        targetRotation = startRotation = transform.localRotation;
+        canvasRotation = Quaternion.LookRotation((m_ShipCanvas.transform.localPosition - this.transform.localPosition).normalized, transform.up);
+    }
+
     public void Init()
     {
         closestPlanet = ScanClosestPlanet();
@@ -89,4 +100,50 @@ public class ShipConsole : MonoBehaviour
         }
         return closestPlanet;
     }
+
+    Quaternion targetRotation;
+    float rot = 0f;
+    Quaternion startRotation;
+
+    Quaternion defaultRotation = Quaternion.identity;
+    Quaternion canvasRotation;
+
+    public void FocusCanvas(bool b){
+        startRotation = m_ShipCamera.transform.localRotation;
+        if(b){
+
+            targetRotation = defaultRotation;  
+            // targetRotation = Quaternion.LookRotation( Vector3.forward, Vector3.up );
+            rot = 0f;
+            
+            // m_ShipCamera.transform.forward = Vector3.forward;
+            // m_ShipCamera.transform.localRotation = Quaternion.identity;
+        }
+        else {
+            rot = 45f;
+            // var v = Quaternion.LookRotation((m_ShipCanvas.transform.localPosition - this.transform.localPosition).normalized, transform.up );
+            // targetRotation = Quaternion.Euler(rot, 0f,0f);
+
+            // rot = Quaternion.LookRotation((m_ShipCanvas.transform.localPosition - this.transform.localPosition).normalized, transform.up).eulerAngles.x;
+
+            // m_ShipCamera.transform.LookAt(m_ShipCanvas.transform.position, transform.up);
+
+            targetRotation = canvasRotation;
+        }
+        // m_ShipCamera.transform.localRotation = targetRotation;
+        c = 0f;
+
+    }
+
+    float c = 0f;
+
+    void Update(){
+        
+        if(m_ShipCamera.transform.localRotation != targetRotation){
+            // m_ShipCamera.transform.localRotation = Quaternion.Lerp(m_ShipCamera.transform.localRotation, targetRotation, Time.deltaTime * 10f);
+            m_ShipCamera.transform.localRotation = Quaternion.Lerp(startRotation, targetRotation, c);
+            c += Time.deltaTime * 3f;
+        }
+    }
+
 }
