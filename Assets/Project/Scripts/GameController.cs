@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
     private WorldSpace m_Space = null;
     [SerializeField]
     private UIManager m_UIManager = null;
+    private AudioManager m_AudioManager = null;
     private delegate void UpdateState(float dt);
     private UpdateState m_UpdateState = null;
 
@@ -29,9 +30,11 @@ public class GameController : MonoBehaviour
     void Start()
     {
         Debug.Log("show tutorial");
+        m_AudioManager = GetComponent<AudioManager>();
         m_UpdateState = _UpdateTutorial;
         m_Space.Init();    
         m_UIManager.Init();
+        m_AudioManager.Init();
     }
 
     // Update is called once per frame
@@ -39,6 +42,18 @@ public class GameController : MonoBehaviour
     {
         float dt = Time.deltaTime;
         m_UpdateState(dt);
+        if(Input.GetKeyUp(KeyCode.Alpha7))
+        {
+            m_AudioManager.PlaySFX(AudioManager.ESFX.AlarmAir1, true);
+        }
+        else if(Input.GetKeyUp(KeyCode.Alpha8))
+        {
+            m_AudioManager.PlayBGM(AudioManager.EBGM.GameTheme, true);
+        }
+        else if(Input.GetKeyUp(KeyCode.Alpha9))
+        {
+            m_AudioManager.StopAll();
+        }
     }
 
     void _UpdateTutorial(float dt)
