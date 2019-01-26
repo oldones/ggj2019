@@ -166,6 +166,21 @@ public class ShipController2 : MonoBehaviour
             m_Hyperdrive = false;
         }
 
+        if(Input.GetKeyDown(KeyCode.C)){
+            m_ShipConsole.FocusPanel(ShipConsole.EPanels.Center);
+        }
+
+        if(Input.GetKeyDown(KeyCode.B)){
+            m_ShipConsole.FocusPanel(ShipConsole.EPanels.Right);
+        }
+
+        if(Input.GetKeyDown(KeyCode.V)){
+            m_ShipConsole.FocusPanel(ShipConsole.EPanels.Left);
+        }
+        
+        if(Input.GetKeyDown(KeyCode.Space)){
+            m_ShipConsole.FocusPanel(ShipConsole.EPanels.None);
+        }
     }
 
 }

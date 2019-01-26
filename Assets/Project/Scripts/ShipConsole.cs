@@ -21,6 +21,23 @@ public class ShipConsole : MonoBehaviour
     
     private WorldSpace m_WorldSpace = null;
 
+    private Camera m_ShipCamera;
+    [SerializeField]
+    private Canvas[] m_CanvasPanels;
+    Quaternion defaultRotation = Quaternion.identity;
+    Quaternion centerPanelRotation;
+    Quaternion leftPanelRotation;
+    Quaternion rightPanelRotation;
+
+    void Awake(){
+        m_ShipCamera = GetComponentInChildren<Camera>();
+        targetRotation = startRotation = transform.localRotation;
+
+        centerPanelRotation = Quaternion.LookRotation((m_CanvasPanels[0].transform.localPosition - transform.localPosition), transform.up);
+        leftPanelRotation = Quaternion.LookRotation((m_CanvasPanels[1].transform.localPosition - transform.localPosition), transform.up);
+        rightPanelRotation = Quaternion.LookRotation((m_CanvasPanels[2].transform.localPosition - transform.localPosition), transform.up);
+    }
+
     public void Init(WorldSpace ws)
     {
         m_WorldSpace = ws;
@@ -129,5 +146,39 @@ public class ShipConsole : MonoBehaviour
         m_JumpTarget = closestPlanet.trf.position;
         m_UpdateMethod = _FlyToUpdate;
         m_CanInteract = false;
+    }
+
+    public enum EPanels { None, Center, Left, Right }
+    Quaternion targetRotation;
+    Quaternion startRotation;
+
+    public void FocusPanel(EPanels panel){
+        startRotation = m_ShipCamera.transform.localRotation;
+        
+        switch(panel){
+            case EPanels.None:
+                targetRotation = defaultRotation;
+                break;
+            case EPanels.Center:
+                targetRotation = centerPanelRotation;
+                break;
+            case EPanels.Left:
+                targetRotation = leftPanelRotation;
+                break;
+            case EPanels.Right:
+                targetRotation = rightPanelRotation;
+                break;
+        }
+        
+        c = 0f;
+    }
+
+    float c = 0f;
+
+    void Update(){
+        if(m_ShipCamera.transform.localRotation != targetRotation){
+            m_ShipCamera.transform.localRotation = Quaternion.Lerp(startRotation, targetRotation, c);
+            c+=Time.deltaTime * 3f;
+        }
     }
 }
