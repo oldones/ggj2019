@@ -569,7 +569,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adbbc28cdb09e4ad580fc4746f0ad2f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UseMouse: 0
+  m_UseMouse: 1
   m_MouseSensitivity: 1
   m_InvertMousePitch: 0
   m_SimpleMode: 1
