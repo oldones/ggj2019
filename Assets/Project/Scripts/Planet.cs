@@ -6,10 +6,13 @@ using UnityEngine;
 public class Planet : MonoBehaviour
 {
     public GameObject planet{ get; private set;}
+    public Transform trf{get{return m_Trf;}}
+    private Transform m_Trf;
 
     void Awake()
     {
-        planet = gameObject;    
+        planet = gameObject;
+        m_Trf = transform;    
     }
 
     public static Planet CreatePlanet(Vector3 pos, string pname, int idx, WorldSpace space, SPlanetConfig config)
@@ -34,7 +37,7 @@ public class Planet : MonoBehaviour
 
     public void UpdatePlanet(ShipConsole sc, float dt)
     {
-        Debug.LogFormat("Updating planet: {0}", planet.name);
+//        Debug.LogFormat("Updating planet: {0}", planet.name);
     }
 
 

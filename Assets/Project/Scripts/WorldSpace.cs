@@ -39,19 +39,12 @@ public class WorldSpace : MonoBehaviour
         {
             m_Planets.Add(m_Trf.GetChild(i).GetComponent<Planet>());
         }
+        m_ShipConsole.Init();
     }
 
     private void Update()
     {
         float dt = Time.deltaTime;
-        // if(m_Planets != null)
-        // {
-        //     int count = m_Planets.Count;
-        //     for(int i = 0 ; i < count; ++i)
-        //     {
-        //         m_Planets[i].UpdatePlanet(dt);
-        //     }
-        // }
         
         if(Input.GetKeyUp(KeyCode.Alpha1))
         {
