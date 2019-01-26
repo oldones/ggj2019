@@ -204,7 +204,8 @@ public class ShipConsole : MonoBehaviour
         for(int i = 0 ; i < count; ++i)
         {
             float dist = Vector3.Distance(pos, ps[i].planet.transform.position);
-            sList.Add(dist, ps[i]);
+            if(!sList.ContainsKey(dist))
+                sList.Add(dist, ps[i]);
         }
 
         closest = sList.Keys[0];
@@ -217,7 +218,7 @@ public class ShipConsole : MonoBehaviour
         }
 
         Planet[] result = new Planet[numPlanets];
-        for(int i = 0 ; i < sList.Values.Count; ++i)
+        for(int i = 0 ; i < numPlanets; ++i)
         {
             result[i] = sList.Values[i];
         }
