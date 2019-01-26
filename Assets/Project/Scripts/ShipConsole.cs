@@ -18,8 +18,12 @@ public class ShipConsole : MonoBehaviour
     private Vector3 m_JumpTarget = Vector3.zero;
     [SerializeField]
     private GameObject m_TargetPlanet;
-    public void Init()
+    
+    private WorldSpace m_WorldSpace = null;
+
+    public void Init(WorldSpace ws)
     {
+        m_WorldSpace = ws;
         closestPlanet = ScanClosestPlanet();
         m_Trf = transform;
         m_UpdateMethod = _IdleUpdate;
@@ -61,6 +65,11 @@ public class ShipConsole : MonoBehaviour
         }
     }
 
+    public void ToggleInteract(bool v)
+    {
+        m_CanInteract = v;
+    }
+
     private void _InteractUpdate(float dt)
     {
         m_CanInteract = false;
@@ -86,7 +95,7 @@ public class ShipConsole : MonoBehaviour
 
     public Planet ScanClosestPlanet(bool lookAt = false)
     {
-        List<Planet> ps = WorldSpace.Instance.planets;
+        List<Planet> ps = m_WorldSpace.planets;
         Vector3 pos = transform.position;
         int count = ps.Count;
         float closest = float.MaxValue;
