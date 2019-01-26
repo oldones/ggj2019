@@ -20,6 +20,8 @@ public class ShipConsole : MonoBehaviour
     private GameObject m_TargetPlanet;
     
     private WorldSpace m_WorldSpace = null;
+    private Planet m_HomePlanet = null;
+    private Vector3 m_HomePlanetCoords;
 
     private Camera m_ShipCamera;
     [SerializeField]
@@ -41,15 +43,23 @@ public class ShipConsole : MonoBehaviour
     public void Init(WorldSpace ws)
     {
         m_WorldSpace = ws;
+        m_HomePlanet = ws.homePlanet;
+        m_HomePlanetCoords = m_HomePlanet.trf.position;
         closestPlanet = ScanClosestPlanet();
         m_Trf = transform;
         m_UpdateMethod = _IdleUpdate;
     }
 
-    public void UpdateShipConsole(float dt)
+    public bool UpdateShipConsole(float dt)
     {
         m_UpdateMethod(dt);
         closestPlanet.UpdatePlanet(this, dt);
+        return _ReachHomePlanet();
+    }
+
+    private bool _ReachHomePlanet()
+    {
+        return Vector3.Distance(m_Trf.position, m_HomePlanetCoords) < MAX_DIST_INTERACT_PLANET;
     }
 
     private void _IdleUpdate(float dt)
