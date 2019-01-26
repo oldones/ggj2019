@@ -43,9 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 854f5789f2b489b4cb96cacb94390e07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SpaceSize: 100000
+  m_SpaceSize: 10000
   m_NumPlanets: 500
-  m_MinDistBetweenPlanets: 10
   m_MinPlanetSize: 50
   m_MaxPlanetSize: 500
   m_PlanetTextures:
@@ -64,3 +63,4 @@ MonoBehaviour:
   m_PlanetMaterial: {fileID: 2100000, guid: 77966f6c7c84172428628679a52663a3, type: 2}
   m_PlanetPrefab: {fileID: 873600474223607539, guid: df9775aba534c6747a54057472de165d,
     type: 3}
+  m_Planets: []

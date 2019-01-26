@@ -21,12 +21,17 @@ public class WorldSpace : MonoBehaviour
     public GameObject planetPrefab{ get {return m_PlanetPrefab;}}
     [SerializeField]
     private List<Planet> m_Planets;
+    public List<Planet> planets{get{return m_Planets;}}
     [SerializeField]
     private Dictionary<int, Material> m_PlanetMaterials;
     private Transform m_Trf;
 
+    public static WorldSpace Instance;
+
+
     private void Awake()
     {
+        Instance = this;
         m_Trf = transform;
         for(int i = 0 ; i < m_NumPlanets; ++i)
         {
@@ -71,14 +76,9 @@ public class WorldSpace : MonoBehaviour
 
     public void WipeSpace()
     {
-        if(m_Trf.childCount == 0) return;
-
         m_Trf = transform;
-        int count = m_Trf.childCount;
-        for(int i = 0 ; i < count; ++i)
-        {
-            GameObject.DestroyImmediate(m_Trf.GetChild(i).gameObject);
-        }
+        while(m_Trf.childCount > 0)
+            GameObject.DestroyImmediate(m_Trf.GetChild(0).gameObject);
         m_Planets = null;
     }
 
