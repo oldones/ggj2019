@@ -81,7 +81,7 @@ public class WorldSpace : MonoBehaviour
         while(retries > 0)
         {
             p = planets[UnityEngine.Random.Range(0, planets.Count)];
-            bool isPlanet = p.celestType == Planet.ECELESTIALTYPE.PLANET;
+            bool isPlanet = p.config.celestType == Planet.ECELESTIALTYPE.PLANET;
             if(isPlanet && Vector3.Distance(shipPos, p.trf.position) > m_MinDistanceHomePlanet)
             {
                 Debug.LogFormat("Chose {0} to be home planet.", p.planet.name);
@@ -99,11 +99,11 @@ public class WorldSpace : MonoBehaviour
         Planet.SPlanetConfig cfg = new Planet.SPlanetConfig();
         Vector3 pos = _GetValidPlanetPos(UnityEngine.Random.insideUnitSphere * m_SpaceSize);
         float rand = UnityEngine.Random.Range(0f, 1f);
-        cfg.cType = Planet.ECELESTIALTYPE.STAR;
+        cfg.celestType = Planet.ECELESTIALTYPE.STAR;
         string pname = _GetPlanetName();
         if(rand > 0.01)
         {
-            cfg.cType = Planet.ECELESTIALTYPE.PLANET;
+            cfg.celestType = Planet.ECELESTIALTYPE.PLANET;
             float maxSize = m_MinPlanetSize * 10f;
             float scaleRand = UnityEngine.Random.Range(m_MinPlanetSize, maxSize);
             cfg.scale = Vector3.one * scaleRand;
@@ -130,7 +130,7 @@ public class WorldSpace : MonoBehaviour
 
             for(int i = 0 ; i < count; ++i)
             {
-                if(name == planets[i].planet.name)
+                if(name == planets[i].gameObject.name)
                 {
                     validName = false;
                     break;
@@ -170,7 +170,7 @@ public class WorldSpace : MonoBehaviour
             {
                 for(int i = 0 ; i < planets.Count; ++i)
                 {
-                    if(Vector3.Distance(planets[i].planet.transform.position, candidate) < safeDist)
+                    if(Vector3.Distance(planets[i].transform.position, candidate) < safeDist)
                     {
                         return _GetValidPlanetPos(UnityEngine.Random.insideUnitSphere * m_SpaceSize, retries - 1);
                     }

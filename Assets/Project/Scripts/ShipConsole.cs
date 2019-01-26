@@ -25,6 +25,7 @@ public class ShipConsole : MonoBehaviour
     private WorldSpace m_WorldSpace = null;
     private Planet m_HomePlanet = null;
     private Vector3 m_HomePlanetCoords;
+    private ShipController2 m_ShipController;
 
     private Camera m_ShipCamera;
     [SerializeField]
@@ -35,6 +36,9 @@ public class ShipConsole : MonoBehaviour
     Quaternion rightPanelRotation;
     public bool m_Warp = false;
 
+    public float fuel{ get; private set;}
+    public float investigation{ get; private set;}
+
     [Header("Effects")]
     [SerializeField]
     private Image m_VignetteEffect;
@@ -42,6 +46,7 @@ public class ShipConsole : MonoBehaviour
 
     void Awake(){
         m_ShipCamera = GetComponentInChildren<Camera>();
+        m_ShipController = GetComponent<ShipController2>();
         targetRotation = startRotation = transform.localRotation;
 
         centerPanelRotation = Quaternion.LookRotation((m_CanvasPanels[0].transform.localPosition - transform.localPosition), transform.up);
@@ -51,6 +56,8 @@ public class ShipConsole : MonoBehaviour
 
     public void Init(WorldSpace ws)
     {
+        fuel = 1f;
+        investigation = 0f;
         m_WorldSpace = ws;
         m_HomePlanet = ws.homePlanet;
         m_HomePlanetCoords = m_HomePlanet.trf.position;
@@ -99,6 +106,8 @@ public class ShipConsole : MonoBehaviour
                 Debug.LogFormat("Can Interact again with {0}", closestPlanet.planet.name);
             }
         }
+        SpendFuel();
+        //Debug.LogFormat("speed: {2} fuel: {0} investigation: {1}", fuel, investigation, m_ShipController.trueSpeed);
     }
 
     public void ToggleInteract(bool v)
@@ -112,7 +121,60 @@ public class ShipConsole : MonoBehaviour
         if(Vector3.Distance(closestPlanet.trf.position, m_Trf.position) > MAX_DIST_INTERACT_PLANET)
         {
             m_UpdateMethod = _IdleUpdate;
+            _GiveResource(closestPlanet.config.resource);
         }
+    }
+
+    private void _GiveResource(Planet.ERESOURCE res)
+    {
+        float rand = 0f;
+        switch(res)
+        {
+            case Planet.ERESOURCE.FUEL:
+                rand = UnityEngine.Random.Range(0.05f, 0.5f);
+                fuel += rand;
+                fuel = Mathf.Clamp(fuel,0f, 1f);
+            break;
+            case Planet.ERESOURCE.INVESTIGATION:
+                rand = UnityEngine.Random.Range(0.01f, 0.1f);
+                investigation += rand;
+                investigation = Mathf.Clamp(investigation,0f, 1f);
+                if(investigation > 0.99f)
+                {
+                    _DiscloseHomePlanet();
+                }
+            break;
+            default:
+            break;
+        }
+    }
+
+    public void SpendFuel()
+    {
+        if(m_ShipController.trueSpeed > 5f)
+        {
+            float val = 0.0001f;
+            if(m_ShipController.hiperDriving)
+            {
+                val *= 3f;
+            }
+            fuel -= val;
+            fuel = Mathf.Clamp(fuel,0f, 1f);
+            if(fuel == 0f)
+            {
+                _GameOver();
+            }
+        }
+    }
+
+    private void _DiscloseHomePlanet()
+    {
+        //indicate the player which is the home planet
+    }
+
+    private void _GameOver()
+    {
+        GameController.instance.GameOver();
     }
 
     private void _FlyToUpdate(float dt)

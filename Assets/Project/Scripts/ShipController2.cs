@@ -39,6 +39,8 @@ public class ShipController2 : MonoBehaviour
     [Header("Do not edit")]
     [SerializeField]
     private float m_TrueSpeed = 0.0f;
+    public float trueSpeed{ get{ return m_TrueSpeed;}}
+    public bool hiperDriving{ get{ return m_TrueSpeed > m_MaxSpeed;}}
 
 
     private ShipConsole m_ShipConsole;
