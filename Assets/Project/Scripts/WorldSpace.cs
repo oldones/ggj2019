@@ -71,11 +71,15 @@ public class WorldSpace : MonoBehaviour
 
     public void WipeSpace()
     {
-        foreach (Planet p in m_Planets)
+        if(m_Trf.childCount == 0) return;
+
+        m_Trf = transform;
+        int count = m_Trf.childCount;
+        for(int i = 0 ; i < count; ++i)
         {
-            GameObject.DestroyImmediate(p.planet);
+            GameObject.DestroyImmediate(m_Trf.GetChild(i).gameObject);
         }
-        m_Planets.Clear();
+        m_Planets = null;
     }
 
     private Vector3 _ValidSpacePos(Vector3 candidate, int retries = 100)
