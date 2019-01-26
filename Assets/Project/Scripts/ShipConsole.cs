@@ -229,7 +229,7 @@ public class ShipConsole : MonoBehaviour
     public void FlyToPlanet(Planet p)
     {
         m_JumpTime = 0f;
-        m_TargetPlanet = p;
+        m_TargetPlanet = p.planet;
 
         if(m_TargetPlanet != null)
         {
