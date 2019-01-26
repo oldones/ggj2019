@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +9,8 @@ public class GameController : MonoBehaviour
     {
         Tutorial,
         Game,
-        EndGame
+        EndGame,
+        GameOver
     }
 
     [SerializeField]
@@ -84,5 +86,11 @@ public class GameController : MonoBehaviour
         Debug.Log("Change to game state");
         m_UIManager.EnableMenu(GameController.EState.Game);
         m_UpdateState = _UpdateGame;
+    }
+
+    internal void GameOver()
+    {
+        m_UIManager.EnableMenu(EState.GameOver);
+        m_UpdateState = _UpdateEnd;
     }
 }
