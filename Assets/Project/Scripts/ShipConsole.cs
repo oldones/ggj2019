@@ -7,7 +7,7 @@ public class ShipConsole : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.F1))
+        if(Input.GetKeyUp(KeyCode.Alpha1))
         {
             _ScanClosestPlanet();
         }
