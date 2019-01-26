@@ -101,7 +101,7 @@ public class WorldSpace : MonoBehaviour
     private string _GenName()
     {
         string[] prefixes = new string[]{"HD ","HIP ", "GJ ", "Kepler-", "Brahe-", "Galilei-", "Halley-", "Herschel-", "Messier-", "Cannon-", "Leavitt-",
-        "Samos-","Mitchell-","Laplace-","Lowel-", "Bannerker-", "Galle-","Ptolemy-", "Copernicus-", "Newton-","Huygens-","Cassini-", "Sagan-","Hawking-"};
+        "Samos-","Mitchell-","Laplace-","Lowel-", "Banneker-", "Galle-","Ptolemy-", "Copernicus-", "Newton-","Huygens-","Cassini-", "Sagan-","Hawking-"};
         string[] sufixes = new string[]{"", "A", "b", "Ab"};
         string prf = prefixes[UnityEngine.Random.Range(0, prefixes.Length)];
         int mid = UnityEngine.Random.Range(100000, 1000000);
