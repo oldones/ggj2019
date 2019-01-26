@@ -19,6 +19,7 @@ public class UIManager : MonoBehaviour
     private void _OnClickTutorialButton()
     {
         GameController.instance.CloseTutorial();
+        GameController.instance.audioManager.PlaySFX(AudioManager.ESFX.Button1);
     }
 
     private void _DisableAllMenus()

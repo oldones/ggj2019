@@ -18,6 +18,8 @@ public class WorldSpace : MonoBehaviour
     [SerializeField]
     private Material m_PlanetMaterial = null;
     [SerializeField]
+    private Material m_StarMaterial = null;
+    [SerializeField]
     private GameObject m_PlanetPrefab = null;
     public GameObject planetPrefab{ get {return m_PlanetPrefab;}}
     public List<Planet> planets{get;private set;}
@@ -79,7 +81,8 @@ public class WorldSpace : MonoBehaviour
         while(retries > 0)
         {
             p = planets[UnityEngine.Random.Range(0, planets.Count)];
-            if(Vector3.Distance(shipPos, p.trf.position) > m_MinDistanceHomePlanet)
+            bool isPlanet = p.celestType == Planet.ECELESTIALTYPE.PLANET;
+            if(isPlanet && Vector3.Distance(shipPos, p.trf.position) > m_MinDistanceHomePlanet)
             {
                 Debug.LogFormat("Chose {0} to be home planet.", p.planet.name);
                 return p;
@@ -95,9 +98,23 @@ public class WorldSpace : MonoBehaviour
     {
         Planet.SPlanetConfig cfg = new Planet.SPlanetConfig();
         Vector3 pos = _GetValidPlanetPos(UnityEngine.Random.insideUnitSphere * m_SpaceSize);
-        float scaleRand = UnityEngine.Random.Range(m_MinPlanetSize, m_MaxPlanetSize);
-        cfg.scale = Vector3.one * scaleRand;
-        return Planet.CreatePlanet(pos, _GetPlanetName(), i, this, cfg);
+        float rand = UnityEngine.Random.Range(0f, 1f);
+        cfg.cType = Planet.ECELESTIALTYPE.STAR;
+        string pname = _GetPlanetName();
+        if(rand > 0.01)
+        {
+            cfg.cType = Planet.ECELESTIALTYPE.PLANET;
+            float maxSize = m_MinPlanetSize * 10f;
+            float scaleRand = UnityEngine.Random.Range(m_MinPlanetSize, maxSize);
+            cfg.scale = Vector3.one * scaleRand;
+        }
+        else
+        {
+            Debug.LogFormat("Praise the Sun! {0}", pname);
+            float scaleRand = UnityEngine.Random.Range(m_MaxPlanetSize * 0.85f, m_MaxPlanetSize);
+            cfg.scale = Vector3.one * scaleRand;   
+        }
+        return Planet.CreatePlanet(pos, pname, i, this, cfg);
     }
 
     private string _GetPlanetName()
@@ -148,7 +165,7 @@ public class WorldSpace : MonoBehaviour
         if(retries > 0)
         {
             Vector3 origin = Vector3.zero;
-            float safeDist = m_MaxPlanetSize * 3;     
+            float safeDist = m_MaxPlanetSize * 5;     
             if(Vector3.Distance(origin, candidate) > safeDist)
             {
                 for(int i = 0 ; i < planets.Count; ++i)
@@ -176,17 +193,31 @@ public class WorldSpace : MonoBehaviour
         return m_PlanetTextures[idx];
     }
 
-    public Material GetPlanetMaterial(int idx)
+    public Material GetPlanetMaterial(Planet.ECELESTIALTYPE ctype)
     {
+        int idx = -1;
+        Material mat = m_PlanetMaterial;
+        switch(ctype)
+        {
+            case Planet.ECELESTIALTYPE.PLANET:
+                idx = UnityEngine.Random.Range(0, m_PlanetTextures.Length - 1);
+            break;
+            case Planet.ECELESTIALTYPE.STAR:
+                mat = m_StarMaterial;
+                idx = m_PlanetTextures.Length - 1;
+            break;
+            default:
+            break;
+        }
         if(idx == -1)
         {
-            idx = UnityEngine.Random.Range(0, m_PlanetTextures.Length);
+            idx = UnityEngine.Random.Range(0, m_PlanetTextures.Length - 1);
         }
 
         if(!m_PlanetMaterials.ContainsKey(idx))
         {
             Texture t = _GetPlanetTexture(idx);
-            Material m = new Material(m_PlanetMaterial);
+            Material m = new Material(mat);
             m.mainTexture = t;
             m_PlanetMaterials.Add(idx, m);
         }

@@ -47,7 +47,7 @@ public class AudioManager : MonoBehaviour
         m_BGMSource.Play();
         
     }
-    public void PlaySFX(ESFX sfx, bool loop)
+    public void PlaySFX(ESFX sfx, bool loop = false)
     {
         Debug.LogFormat("Play SFX {0}", sfx);
         AudioClip ac = m_SFXClips[(int)sfx];
