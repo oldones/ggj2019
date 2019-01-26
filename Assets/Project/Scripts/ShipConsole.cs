@@ -243,11 +243,16 @@ public class ShipConsole : MonoBehaviour
 
     public enum EPanels { None, Center, Left, Right }
     private EPanels m_CurrentPanel = EPanels.None;
+    
 
     Quaternion targetRotation;
     Quaternion startRotation;
 
     public bool IsSteering {get {return m_CurrentPanel == EPanels.None;}}
+
+    public int GetCurrentPanelIndex(){
+        return ((int)m_CurrentPanel) - 1;
+    }
 
     public void FocusPanel(EPanels panel){
         

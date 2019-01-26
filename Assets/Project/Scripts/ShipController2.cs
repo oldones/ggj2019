@@ -201,11 +201,20 @@ public class ShipController2 : MonoBehaviour
         }
     }
 
+    private Planet[] m_CurrentTrackedPlanets;
+
     private void _HandleConsoleInput(){
         if(Input.GetKeyDown(KeyCode.T)){
             if(m_RenderTexController != null){
-                
-                m_RenderTexController.SetupNavigationPreview(m_ShipConsole.ScanClosestPlanet(3));
+                m_CurrentTrackedPlanets = m_ShipConsole.ScanClosestPlanet(3);
+                m_RenderTexController.SetupNavigationPreview(m_CurrentTrackedPlanets);
+            }
+        }
+        if(Input.GetKeyDown(KeyCode.Return)){
+            if(!m_ShipConsole.IsSteering && m_CurrentTrackedPlanets != null){
+
+                int index = m_ShipConsole.GetCurrentPanelIndex();
+                m_ShipConsole.FlyToPlanet(m_CurrentTrackedPlanets[index]);
             }
         }
     }

@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
         GameOver
     }
 
+    public WorldSpace Space {get{return m_Space;}}
     [SerializeField]
     private WorldSpace m_Space = null;
     [SerializeField]
