@@ -609,7 +609,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TargetPlanet: {fileID: 0}
-  m_CanvasPanels: []
+  m_CanvasPanels:
+  - {fileID: 5534285756190178571}
+  - {fileID: 2380980224103460643}
+  - {fileID: 5410799017836146140}
 --- !u!1 &8534991045666578642
 GameObject:
   m_ObjectHideFlags: 0
