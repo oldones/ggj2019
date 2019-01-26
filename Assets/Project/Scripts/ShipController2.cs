@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+#pragma warning disable CS0649 //serialize field bullshit
+
 public class ShipController2 : MonoBehaviour
 {
     [Header("Control scheme")]
@@ -82,9 +84,7 @@ public class ShipController2 : MonoBehaviour
         return mPos.x >= 0f && mPos.x <= Screen.width && mPos.y >= 0f && mPos.y <= Screen.height;
     }
 
-    bool focusingCanvas = false;
-
-    private void _HandleInput(){
+    private void _HandleSteering(){
         m_Roll = 0f;
         m_Pitch = 0f;
         m_Yaw = 0f;
@@ -165,7 +165,9 @@ public class ShipController2 : MonoBehaviour
             m_TrueSpeed = m_PrevTrueSpeed;
             m_Hyperdrive = false;
         }
+    }
 
+    private void _HandlePanelInputs(){
         if(Input.GetKeyDown(KeyCode.C)){
             m_ShipConsole.FocusPanel(ShipConsole.EPanels.Center);
         }
@@ -181,6 +183,14 @@ public class ShipController2 : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space)){
             m_ShipConsole.FocusPanel(ShipConsole.EPanels.None);
         }
+    }
+
+    private void _HandleInput(){
+        
+        if(m_ShipConsole.IsSteering)
+            _HandleSteering();
+        _HandlePanelInputs();
+
     }
 
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+#pragma warning disable CS0649 //serialize field bullshit
+
 public class ShipConsole : MonoBehaviour
 {
     public Planet closestPlanet{get;private set;}
@@ -159,12 +161,22 @@ public class ShipConsole : MonoBehaviour
     }
 
     public enum EPanels { None, Center, Left, Right }
+    private EPanels m_CurrentPanel = EPanels.None;
+
     Quaternion targetRotation;
     Quaternion startRotation;
 
+    public bool IsSteering {get {return m_CurrentPanel == EPanels.None;}}
+
     public void FocusPanel(EPanels panel){
-        startRotation = m_ShipCamera.transform.localRotation;
         
+        if(panel == m_CurrentPanel)
+            return;
+
+        startRotation = m_ShipCamera.transform.localRotation;
+
+        m_CurrentPanel = panel;
+
         switch(panel){
             case EPanels.None:
                 targetRotation = defaultRotation;
@@ -179,7 +191,7 @@ public class ShipConsole : MonoBehaviour
                 targetRotation = rightPanelRotation;
                 break;
         }
-        
+
         c = 0f;
     }
 
