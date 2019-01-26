@@ -7,7 +7,14 @@ public class Planet : MonoBehaviour
 {
     public GameObject planet{ get; private set;}
     public Transform trf{get{return m_Trf;}}
+    public ECELESTIALTYPE celestType{get; private set;}
     private Transform m_Trf;
+
+    public enum ECELESTIALTYPE
+    {
+        PLANET,
+        STAR
+    }
 
     void Awake()
     {
@@ -23,16 +30,18 @@ public class Planet : MonoBehaviour
         p.transform.SetParent(space.transform);
         p.transform.localScale = config.scale;
         p.name = pname; //"Planet_" + idx;
-        Material t = space.GetPlanetMaterial(-1);
+        config.obj = p;
+        pl.SetConfig(config);
+        Material t = space.GetPlanetMaterial(pl.celestType);
         p.GetComponent<MeshRenderer>().material = t;
         GameObject.DestroyImmediate(p.GetComponent<SphereCollider>());
-        pl.SetPlanet(p);
         return pl;
     }
 
-    public void SetPlanet(GameObject o)
+    public void SetConfig(SPlanetConfig cfg)
     {
-        planet = o;
+        planet = cfg.obj;
+        celestType = cfg.cType;
     }
 
     public void UpdatePlanet(ShipConsole sc, float dt)
@@ -44,5 +53,7 @@ public class Planet : MonoBehaviour
     public struct SPlanetConfig
     {
         public Vector3 scale;
+        public GameObject obj;
+        public Planet.ECELESTIALTYPE cType;
     }
 }
