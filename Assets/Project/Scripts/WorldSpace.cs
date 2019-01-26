@@ -44,19 +44,19 @@ public class WorldSpace : MonoBehaviour
         m_ShipConsole.Init(this);
     }
 
-    public void UpdateWorldSpace(float dt)
+    public bool UpdateWorldSpace(float dt)
     {   
-        m_ShipConsole.UpdateShipConsole(dt);
+    
+        if(Input.GetKeyUp(KeyCode.Alpha1))
+        {
+            m_ShipConsole.ScanClosestPlanet(true);
+        }
+        else if(Input.GetKeyUp(KeyCode.Alpha2))
+        {
+            m_ShipConsole.FlyToClosestPlanet();
+        }
 
-        // if(Input.GetKeyUp(KeyCode.Alpha1))
-        // {
-        //     m_ShipConsole.ScanClosestPlanet(true);
-        // }
-        // else if(Input.GetKeyUp(KeyCode.Alpha2))
-        // {
-        //     m_ShipConsole.FlyToClosestPlanet();
-        // }
-        // 
+        return m_ShipConsole.UpdateShipConsole(dt);
     }
     
     public void BuildSpace()
