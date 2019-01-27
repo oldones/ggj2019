@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
+#pragma warning disable CS0649 //serialize field bullshit
 
 public class ShipConsole : MonoBehaviour
 {
@@ -17,22 +20,62 @@ public class ShipConsole : MonoBehaviour
     private float m_JumpTime = 0f;
     private Vector3 m_JumpTarget = Vector3.zero;
     [SerializeField]
-    private GameObject m_TargetPlanet;
+    private GameObject m_TargetPlanet = null;
     
     private WorldSpace m_WorldSpace = null;
+    private Planet m_HomePlanet = null;
+    private Vector3 m_HomePlanetCoords;
+    private ShipController2 m_ShipController;
+
+    private Camera m_ShipCamera;
+    [SerializeField]
+    private Canvas[] m_CanvasPanels;
+    Quaternion defaultRotation = Quaternion.identity;
+    Quaternion centerPanelRotation;
+    Quaternion leftPanelRotation;
+    Quaternion rightPanelRotation;
+    public bool m_Warp = false;
+
+    public float fuel{ get; private set;}
+    public float investigation{ get; private set;}
+
+    [Header("Effects")]
+    [SerializeField]
+    private Image m_VignetteEffect;
+
+
+    void Awake(){
+        m_ShipCamera = GetComponentInChildren<Camera>();
+        m_ShipController = GetComponent<ShipController2>();
+        targetRotation = startRotation = transform.localRotation;
+
+        centerPanelRotation = Quaternion.LookRotation((m_CanvasPanels[0].transform.localPosition - transform.localPosition), transform.up);
+        leftPanelRotation = Quaternion.LookRotation((m_CanvasPanels[1].transform.localPosition - transform.localPosition), transform.up);
+        rightPanelRotation = Quaternion.LookRotation((m_CanvasPanels[2].transform.localPosition - transform.localPosition), transform.up);
+    }
 
     public void Init(WorldSpace ws)
     {
+        fuel = 1f;
+        investigation = 0f;
         m_WorldSpace = ws;
-        closestPlanet = ScanClosestPlanet();
+        m_HomePlanet = ws.homePlanet;
+        m_HomePlanetCoords = m_HomePlanet.trf.position;
+        closestPlanet = ScanClosestPlanet(1)[0];
         m_Trf = transform;
         m_UpdateMethod = _IdleUpdate;
     }
 
-    public void UpdateShipConsole(float dt)
+    public bool UpdateShipConsole(float dt)
     {
         m_UpdateMethod(dt);
         closestPlanet.UpdatePlanet(this, dt);
+        return _ReachHomePlanet();
+    }
+
+    private bool _ReachHomePlanet()
+    {
+        return Vector3.Distance(m_Trf.position, m_HomePlanetCoords) < MAX_DIST_INTERACT_PLANET;
     }
 
     private void _IdleUpdate(float dt)
@@ -43,7 +86,7 @@ public class ShipConsole : MonoBehaviour
             if(m_NextScanTime > SCAN_PLANET_TIMER)
             {
                 m_NextScanTime = 0f;
-                closestPlanet = ScanClosestPlanet();
+                closestPlanet = ScanClosestPlanet(1)[0];
             }
 
             float dist = Vector3.Distance(closestPlanet.trf.position, m_Trf.position);
@@ -63,6 +106,8 @@ public class ShipConsole : MonoBehaviour
                 Debug.LogFormat("Can Interact again with {0}", closestPlanet.planet.name);
             }
         }
+        SpendFuel();
+        //Debug.LogFormat("speed: {2} fuel: {0} investigation: {1}", fuel, investigation, m_ShipController.trueSpeed);
     }
 
     public void ToggleInteract(bool v)
@@ -76,7 +121,60 @@ public class ShipConsole : MonoBehaviour
         if(Vector3.Distance(closestPlanet.trf.position, m_Trf.position) > MAX_DIST_INTERACT_PLANET)
         {
             m_UpdateMethod = _IdleUpdate;
+            _GiveResource(closestPlanet.config.resource);
         }
+    }
+
+    private void _GiveResource(Planet.ERESOURCE res)
+    {
+        float rand = 0f;
+        switch(res)
+        {
+            case Planet.ERESOURCE.FUEL:
+                rand = UnityEngine.Random.Range(0.05f, 0.5f);
+                fuel += rand;
+                fuel = Mathf.Clamp(fuel,0f, 1f);
+            break;
+            case Planet.ERESOURCE.INVESTIGATION:
+                rand = UnityEngine.Random.Range(0.01f, 0.1f);
+                investigation += rand;
+                investigation = Mathf.Clamp(investigation,0f, 1f);
+                if(investigation > 0.99f)
+                {
+                    _DiscloseHomePlanet();
+                }
+            break;
+            default:
+            break;
+        }
+    }
+
+    public void SpendFuel()
+    {
+        if(m_ShipController.trueSpeed > 5f)
+        {
+            float val = 0.0001f;
+            if(m_ShipController.hiperDriving)
+            {
+                val *= 3f;
+            }
+            fuel -= val;
+            fuel = Mathf.Clamp(fuel,0f, 1f);
+            if(fuel == 0f)
+            {
+                _GameOver();
+            }
+        }
+    }
+
+    private void _DiscloseHomePlanet()
+    {
+        //indicate the player which is the home planet
+    }
+
+    private void _GameOver()
+    {
+        GameController.instance.GameOver();
     }
 
     private void _FlyToUpdate(float dt)
@@ -93,33 +191,45 @@ public class ShipConsole : MonoBehaviour
         }
     }
 
-    public Planet ScanClosestPlanet(bool lookAt = false)
+    public Planet[] ScanClosestPlanet(int numPlanets, bool lookAt = false)
     {
         List<Planet> ps = m_WorldSpace.planets;
         Vector3 pos = transform.position;
         int count = ps.Count;
         float closest = float.MaxValue;
+
+        SortedList<float, Planet> sList = new SortedList<float,Planet>();
+        
+
         for(int i = 0 ; i < count; ++i)
         {
             float dist = Vector3.Distance(pos, ps[i].planet.transform.position);
-            if(dist < closest)
-            {
-                closest = dist;
-                closestPlanet = ps[i];
-            }
+            if(!sList.ContainsKey(dist))
+                sList.Add(dist, ps[i]);
         }
+
+        closest = sList.Keys[0];
+        closestPlanet = sList.Values[0];
 
         if(lookAt)
         {
             transform.LookAt(closestPlanet.transform);
             Debug.LogWarningFormat("Closest planet is: {0} at distance: {1}", closestPlanet.planet.name, closest);
         }
-        return closestPlanet;
+
+        Planet[] result = new Planet[numPlanets];
+        for(int i = 0 ; i < numPlanets; ++i)
+        {
+            result[i] = sList.Values[i];
+        }
+
+        return result;
     }
 
-    public void FlyToClosestPlanet()
+    public void FlyToPlanet(Planet p)
     {
         m_JumpTime = 0f;
+        m_TargetPlanet = p.planet;
 
         if(m_TargetPlanet != null)
         {
@@ -129,5 +239,79 @@ public class ShipConsole : MonoBehaviour
         m_JumpTarget = closestPlanet.trf.position;
         m_UpdateMethod = _FlyToUpdate;
         m_CanInteract = false;
+    }
+
+    public enum EPanels { None, Center, Left, Right }
+    private EPanels m_CurrentPanel = EPanels.None;
+    
+
+    Quaternion targetRotation;
+    Quaternion startRotation;
+
+    public bool IsSteering {get {return m_CurrentPanel == EPanels.None;}}
+
+    public int GetCurrentPanelIndex(){
+        return ((int)m_CurrentPanel) - 1;
+    }
+
+    public void FocusPanel(EPanels panel){
+        
+        if(panel == m_CurrentPanel)
+            return;
+
+        startRotation = m_ShipCamera.transform.localRotation;
+
+        m_CurrentPanel = panel;
+
+        switch(panel){
+            case EPanels.None:
+                targetRotation = defaultRotation;
+                break;
+            case EPanels.Center:
+                targetRotation = centerPanelRotation;
+                break;
+            case EPanels.Left:
+                targetRotation = leftPanelRotation;
+                break;
+            case EPanels.Right:
+                targetRotation = rightPanelRotation;
+                break;
+        }
+
+        c = 0f;
+    }
+
+    float c = 0f;
+    float zoomFoV = 35f;
+    float defaultFoV = 65f;
+    float hyperdriveFoV = 110f;
+
+    private void _UpdateCamera(){
+        if(m_ShipCamera.transform.localRotation != targetRotation){
+            //change camera FoV
+            if(m_ShipCamera.fieldOfView != defaultFoV && m_CurrentPanel == EPanels.None)
+                m_ShipCamera.fieldOfView = Mathf.Lerp(m_ShipCamera.fieldOfView, defaultFoV, c);
+            if(m_ShipCamera.fieldOfView != zoomFoV && m_CurrentPanel != EPanels.None)
+                m_ShipCamera.fieldOfView = Mathf.Lerp(m_ShipCamera.fieldOfView, zoomFoV, c);
+            //rotate towards target
+            m_ShipCamera.transform.localRotation = Quaternion.Lerp(startRotation, targetRotation, c);
+            c+=Time.deltaTime * 3f;
+        }
+    }
+
+    public void SetWarp(bool w){
+        m_Warp = w;
+    }
+
+    private void _UpdateWarpEffect(){
+        if(IsSteering){
+            m_ShipCamera.fieldOfView = Mathf.Lerp(m_ShipCamera.fieldOfView, m_Warp ? hyperdriveFoV : defaultFoV, Time.deltaTime * 2f);
+            m_VignetteEffect.color = Color.Lerp(m_VignetteEffect.color, m_Warp ? Color.white : new Color(1f,1f,1f,0f), Time.deltaTime);
+        }
+    }
+
+    void Update(){
+        _UpdateCamera();
+        _UpdateWarpEffect();
     }
 }
