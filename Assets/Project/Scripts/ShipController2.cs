@@ -38,6 +38,12 @@ public class ShipController2 : MonoBehaviour
     [Header("UI")]
     [SerializeField]
     private GameObject m_SpeedUI;
+    [SerializeField]
+    private GameObject m_ResourcesUI;
+    [SerializeField]
+    private GameObject m_InteractUI;
+    [SerializeField]
+    private GameObject m_FeedbackUI;
 
     [Header("Do not edit")]
     [SerializeField]
@@ -68,13 +74,16 @@ public class ShipController2 : MonoBehaviour
 
         m_SpeedBar = m_SpeedUI.GetComponentInChildren<Image>();
         m_SpeedLabel = m_SpeedUI.GetComponentInChildren<TextMeshProUGUI>();
+        m_FuelLabel = m_ResourcesUI.transform.Find("Fuel").GetComponent<TextMeshProUGUI>();
+        m_ResearchLabel = m_ResourcesUI.transform.Find("Research").GetComponent<TextMeshProUGUI>();
+        m_InteractLabel = m_InteractUI.transform.Find("Interact").GetComponent<TextMeshProUGUI>();
+        m_FeedbackLabel = m_FeedbackUI.transform.Find("Feedback").GetComponent<TextMeshProUGUI>();
     }
 
     void Update () {
 
         _HandleInput();
         _ApplyForces();
-
     }
 
     private void _ApplyForces(){
@@ -184,7 +193,7 @@ public class ShipController2 : MonoBehaviour
     }
 
     private void _HandlePanelInputs(){
-        if(Input.GetKeyDown(KeyCode.C)){
+        if(Input.GetKeyDown(KeyCode.V)){
             m_ShipConsole.FocusPanel(ShipConsole.EPanels.Center);
         }
 
@@ -192,7 +201,7 @@ public class ShipController2 : MonoBehaviour
             m_ShipConsole.FocusPanel(ShipConsole.EPanels.Right);
         }
 
-        if(Input.GetKeyDown(KeyCode.V)){
+        if(Input.GetKeyDown(KeyCode.C)){
             m_ShipConsole.FocusPanel(ShipConsole.EPanels.Left);
         }
         
@@ -208,6 +217,7 @@ public class ShipController2 : MonoBehaviour
             if(m_RenderTexController != null){
                 m_CurrentTrackedPlanets = m_ShipConsole.ScanClosestPlanet(3);
                 m_RenderTexController.SetupNavigationPreview(m_CurrentTrackedPlanets);
+                hasScanned = true;
             }
         }
         if(Input.GetKeyDown(KeyCode.Return)){
@@ -215,12 +225,19 @@ public class ShipController2 : MonoBehaviour
                 int index = m_ShipConsole.GetCurrentPanelIndex();
                 m_ShipConsole.FlyToPlanet(m_CurrentTrackedPlanets[index]);
                 m_ShipConsole.FocusPanel(ShipConsole.EPanels.None);
+                hasScanned = false;
             }
         }
     }
 
     private Image m_SpeedBar;
     private TextMeshProUGUI m_SpeedLabel;
+    private TextMeshProUGUI m_FuelLabel;
+    private TextMeshProUGUI m_ResearchLabel;
+    private TextMeshProUGUI m_InteractLabel;
+    private TextMeshProUGUI m_FeedbackLabel;
+
+    private bool hasScanned = false;
 
     private void _UpdateUIElements(){
         if(m_SpeedLabel != null)
@@ -232,6 +249,37 @@ public class ShipController2 : MonoBehaviour
             m_SpeedBar.transform.localScale = Vector3.Lerp(m_SpeedBar.transform.localScale, targetScale, Time.deltaTime * 5f);
             m_SpeedBar.color = m_TrueSpeed > 0f ? Color.white : Color.red;
         }
+        m_FuelLabel.text = string.Format("Fuel levels: {0}", m_ShipConsole.fuel.ToString());
+        m_ResearchLabel.text = string.Format("Research progress: {0}", m_ShipConsole.investigation.ToString());
+
+        string interact = "";
+        if(!hasScanned)
+            interact = "Scan closest planets [T]";
+        else{
+            if(m_ShipConsole.IsSteering)
+                interact = "Select scanned planet [C][V][B]";
+            else
+                interact = "[Enter] to punch coordinates [Space] to cancel";
+        }
+        m_InteractLabel.text = interact;
+    }
+
+    Coroutine feedbackRoutine = null;
+
+    private IEnumerator FeedbackRoutine(string s, float delay){
+        //show label
+        m_FeedbackLabel.text = string.Format("Got {0}", s);
+        yield return new WaitForSeconds(delay);
+        //hide label
+        m_FeedbackLabel.text = "";
+    }
+
+    public void ShowFeedback(string f){
+        if(feedbackRoutine != null){
+            StopCoroutine(feedbackRoutine);
+            feedbackRoutine = null;
+        }
+        feedbackRoutine = StartCoroutine(FeedbackRoutine(f, 3f));
     }
 
     private void _HandleInput(){

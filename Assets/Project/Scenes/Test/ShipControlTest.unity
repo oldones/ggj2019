@@ -23178,6 +23178,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 867201699375930618, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 867201699375930618, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7997128628717277452, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7997128628717277452, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7616686696225618452, guid: 0321fc375211ecc4bbf7825571c9f2dc,
         type: 3}
       propertyPath: m_havePropertiesChanged
@@ -23192,6 +23212,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 797894305667063388, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_Name
+      value: UICanvas
       objectReference: {fileID: 0}
     - target: {fileID: 1620227785690881265, guid: 0321fc375211ecc4bbf7825571c9f2dc,
         type: 3}
@@ -23322,6 +23347,66 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 6473b9adfaff145679f02d59baccc3cb, type: 2}
+    - target: {fileID: 4639055118120932215, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4639055118120932215, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7039055370637689642, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_inputSource
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7039055370637689642, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7039055370637689642, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7039055370637689642, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7039055370637689642, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7039055370637689642, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7039055370637689642, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7039055370637689642, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7039055370637689642, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7039055370637689642, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0321fc375211ecc4bbf7825571c9f2dc, type: 3}
 --- !u!1 &1019680494
