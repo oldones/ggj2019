@@ -27,7 +27,11 @@ public class SectorManager : MonoBehaviour {
     [SerializeField] float minimumFoodSectorConsumption = 0.2f;
     [SerializeField] float maximumFoodSectorConsumption = 2f;
 
+<<<<<<< HEAD
     [SerializeField] float personOxygenConsumptionFactor = 0.0016f;
+=======
+    [SerializeField] float personOxygenConsumptionFactor = 0.0008f;
+>>>>>>> 2739a2a49ba221585e88047b5269d74582a3e986
 
     [SerializeField] float minimumOxygenSectorConsumption = 0.2f;
     [SerializeField] float maximumOxygenSectorConsumption = 2f;

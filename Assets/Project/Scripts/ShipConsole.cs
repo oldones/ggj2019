@@ -147,6 +147,7 @@ public class ShipConsole : MonoBehaviour
             default:
             break;
         }
+        m_ShipController.ShowFeedback(res.ToString());
     }
 
     public void SpendFuel()

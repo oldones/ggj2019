@@ -130,7 +130,7 @@ public class ResourceManager : MonoBehaviour
         return FuelPercent;
     }
 
-    
+
 
     public float getWaterPercent()
     {
@@ -143,7 +143,7 @@ public class ResourceManager : MonoBehaviour
         {
             return false;
         }
-        
+
         return true;
     }
 
@@ -152,7 +152,7 @@ public class ResourceManager : MonoBehaviour
         HappyLevel = SectorManager.getInstance().getHappyInAllSectors();
 
     }
-    
+
     private float GetFuelPolicyConsumption()
     {
         switch (GameCoordinator.getInstance().getCurrentSpeedPolicy())
@@ -163,7 +163,7 @@ public class ResourceManager : MonoBehaviour
                 return NormalSpeedFuelConsumptionFactor;
             default:
                 return LowSpeedFuelConsumptionFactor;
-        }   
+        }
     }
 
 
@@ -171,7 +171,7 @@ public class ResourceManager : MonoBehaviour
     {
         float FuelPower = GetFuelPolicyConsumption();
         FuelConsume = (EngineFuelConsumption * FuelPower) + (SectorFuelConsumption * SectorManager.getInstance().getActiveSectorsCount());
-         
+
 
         return FuelConsume;
     }
@@ -204,4 +204,3 @@ public class ResourceManager : MonoBehaviour
 
 
 }
-
