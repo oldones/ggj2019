@@ -59,6 +59,11 @@ public class GameController : MonoBehaviour
         {
             audioManager.StopAll();
         }
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            ToogleResourceManagerWindow();
+        }
+        
     }
 
     void _UpdateTutorial(float dt)
@@ -81,6 +86,12 @@ public class GameController : MonoBehaviour
     {
         
     }
+
+    private void ToogleResourceManagerWindow()
+    {
+        m_UIManager.ToogleSimulationControlsInterface();
+    }
+
 
     public void CloseTutorial()
     {

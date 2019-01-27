@@ -201,6 +201,15 @@ public class ShipController2 : MonoBehaviour
         }
     }
 
+    private void _ShowResourceManagementConsole()
+    {
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+               
+        }
+    }
+
+
     private Planet[] m_CurrentTrackedPlanets;
 
     private void _HandleConsoleInput(){

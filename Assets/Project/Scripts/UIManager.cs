@@ -8,6 +8,13 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private SMenu[] m_Menus = null;
 
+
+    [SerializeField]
+    private UIVisiblityToogle SimulationControls = null;
+
+    
+    
+
     public void Init()
     {
         SMenu sm = _GetMenu(GameController.EState.Tutorial);
@@ -58,4 +65,33 @@ public class UIManager : MonoBehaviour
         public GameController.EState state;
         public GameObject menuObject;
     }
+
+    public void ToogleSimulationControlsInterface()
+    {
+        SimulationControls.ToogleVisibility();
+    }
+
+    public void presentEndGame(LostGameReason reasonToLose)
+    {
+        switch (reasonToLose)
+        {
+            case LostGameReason.lackOfFuel:
+                //endGameFuelRef.show();
+                return;
+            default:
+            case LostGameReason.lackOfPeople:
+                //endGamePeopleRef.show();
+                return;
+            
+        }
+    }
+
+
 }
+
+public enum LostGameReason
+{
+    lackOfFuel,
+    lackOfPeople
+}
+

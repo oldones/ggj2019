@@ -23178,6 +23178,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1620227785690881265, guid: 0321fc375211ecc4bbf7825571c9f2dc,
+        type: 3}
+      propertyPath: m_Name
+      value: GameController
+      objectReference: {fileID: 0}
     - target: {fileID: 7616686696225618452, guid: 0321fc375211ecc4bbf7825571c9f2dc,
         type: 3}
       propertyPath: m_havePropertiesChanged
@@ -23192,11 +23197,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1620227785690881265, guid: 0321fc375211ecc4bbf7825571c9f2dc,
-        type: 3}
-      propertyPath: m_Name
-      value: GameController
       objectReference: {fileID: 0}
     - target: {fileID: 1620227785690881263, guid: 0321fc375211ecc4bbf7825571c9f2dc,
         type: 3}
